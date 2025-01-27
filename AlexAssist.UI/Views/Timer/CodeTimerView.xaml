@@ -1,0 +1,159 @@
+<UserControl x:Class="AlexAssist.UI.Views.Timer.CodeTimerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:AlexAssist.UI.ViewModels"
+             xmlns:converters="clr-namespace:AlexAssist.UI.Converters"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:CodeTimerViewModel}">
+    
+    <UserControl.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </UserControl.Resources>
+
+    <materialDesign:Card Margin="16" UniformCornerRadius="8">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <DockPanel Grid.Row="0" Margin="0,0,0,24">
+                <materialDesign:PackIcon Kind="Timer" 
+                                       Width="32" 
+                                       Height="32"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                <TextBlock Text="Code Timer"
+                         Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                         Margin="16,0,0,0"
+                         VerticalAlignment="Center"/>
+            </DockPanel>
+
+            <!-- Timer Display -->
+            <StackPanel Grid.Row="1" Margin="0,0,0,24">
+                <TextBlock Text="{Binding CurrentTime}"
+                         Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                         FontFamily="Consolas"
+                         HorizontalAlignment="Center"
+                         Margin="0,0,0,8"/>
+                <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
+                         HorizontalAlignment="Center"
+                         Opacity="0.6">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Today's Total: {0}">
+                            <Binding Path="TotalTimeToday"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Project Info -->
+            <StackPanel Grid.Row="2" Margin="0,0,0,24">
+                <TextBox Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"
+                        materialDesign:HintAssist.Hint="Project Name"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        Margin="0,0,0,16"
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+                
+                <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                        materialDesign:HintAssist.Hint="Description (optional)"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        TextWrapping="Wrap"
+                        AcceptsReturn="True"
+                        Height="80"
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBooleanConverter}}"/>
+            </StackPanel>
+
+            <!-- Controls -->
+            <StackPanel Grid.Row="3" 
+                      Orientation="Horizontal" 
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,24">
+                <Button Command="{Binding StartTimerCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Margin="0,0,16,0"
+                        Visibility="{Binding IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Play" 
+                                               Width="24" 
+                                               Height="24"
+                                               Margin="0,0,8,0"/>
+                        <TextBlock Text="Start Timer"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding StopTimerCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Foreground="Red"
+                        Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Stop" 
+                                               Width="24" 
+                                               Height="24"
+                                               Margin="0,0,8,0"/>
+                        <TextBlock Text="Stop Timer"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- Coming Soon Section -->
+            <StackPanel Grid.Row="4" Margin="0,24,0,0">
+                <Border BorderBrush="{DynamicResource MaterialDesignDivider}" 
+                        BorderThickness="0,1,0,0" 
+                        Padding="0,24,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Coming Soon"
+                                 Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                 Opacity="0.6"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,0,0,16"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Session Manager -->
+                            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                <DockPanel HorizontalAlignment="Center" Margin="0,0,0,8">
+                                    <materialDesign:PackIcon Kind="History" 
+                                                           Width="20" 
+                                                           Height="20"
+                                                           Margin="0,0,8,0"
+                                                           Opacity="0.6"
+                                                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="Session Manager"
+                                             Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                             Opacity="0.6"/>
+                                </DockPanel>
+                            </StackPanel>
+
+                            <!-- Stats -->
+                            <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                <DockPanel HorizontalAlignment="Center" Margin="0,0,0,8">
+                                    <materialDesign:PackIcon Kind="ChartBar" 
+                                                           Width="20" 
+                                                           Height="20"
+                                                           Margin="0,0,8,0"
+                                                           Opacity="0.6"
+                                                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="Coding Stats"
+                                             Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                             Opacity="0.6"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
+</UserControl> 

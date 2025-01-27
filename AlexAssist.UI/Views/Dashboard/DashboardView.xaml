@@ -1,0 +1,292 @@
+<UserControl x:Class="AlexAssist.UI.Views.Dashboard.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:AlexAssist.UI.Views.Dashboard"
+             xmlns:converters="clr-namespace:AlexAssist.UI.Converters"
+             xmlns:timer="clr-namespace:AlexAssist.UI.Views.Timer"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1080">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Greeting and Quote -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                <TextBlock Text="{Binding Greeting}"
+                          Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                          FontWeight="Light"
+                          Margin="0,0,0,16"/>
+                <materialDesign:Card UniformCornerRadius="8"
+                                    materialDesign:ElevationAssist.Elevation="Dp2">
+                    <materialDesign:Card.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="{DynamicResource Primary700}" Offset="0"/>
+                            <GradientStop Color="{DynamicResource Primary900}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </materialDesign:Card.Background>
+                    <Grid Margin="24,20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Quote}"
+                                  Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                  Foreground="{DynamicResource MaterialDesignBody}"
+                                  TextWrapping="Wrap"
+                                  FontStyle="Italic"/>
+                    </Grid>
+                </materialDesign:Card>
+            </StackPanel>
+
+            <!-- Stats Cards -->
+            <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,24">
+                <materialDesign:Card Margin="0,0,12,0" UniformCornerRadius="8"
+                                    materialDesign:ElevationAssist.Elevation="Dp2">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <materialDesign:PackIcon Kind="CheckboxMarkedCircleOutline" 
+                                                   Width="24" Height="24"
+                                                   Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                            <TextBlock Text="Tasks"
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                      Margin="12,0,0,0"/>
+                        </DockPanel>
+                        <StackPanel Grid.Row="1" 
+                                  Orientation="Horizontal" 
+                                  Margin="0,16,0,4"
+                                  HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding CompletedTasks}"
+                                      Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                                      FontWeight="Light"/>
+                            <TextBlock Text="/"
+                                      Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                      Margin="8,8,8,0"
+                                      VerticalAlignment="Bottom"/>
+                            <TextBlock Text="{Binding TotalTasks}"
+                                      Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                      Margin="0,8,0,0"
+                                      VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                        <TextBlock Grid.Row="2" 
+                                  Text="completed"
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                  Opacity="0.6"
+                                  HorizontalAlignment="Center"/>
+                    </Grid>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="12,0" UniformCornerRadius="8"
+                                    materialDesign:ElevationAssist.Elevation="Dp2">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <materialDesign:PackIcon Kind="BookOpenPageVariant" 
+                                                   Width="24" Height="24"
+                                                   Foreground="{DynamicResource SecondaryHueMidBrush}"/>
+                            <TextBlock Text="Diary Entries"
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                      Margin="12,0,0,0"/>
+                        </DockPanel>
+                        <TextBlock Grid.Row="1"
+                                  Text="{Binding DiaryEntries}"
+                                  Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                                  FontWeight="Light"
+                                  Margin="0,16,0,4"
+                                  HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="2"
+                                  Text="total entries"
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                  Opacity="0.6"
+                                  HorizontalAlignment="Center"/>
+                    </Grid>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="12,0,0,0" UniformCornerRadius="8"
+                                    materialDesign:ElevationAssist.Elevation="Dp2">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <DockPanel>
+                            <materialDesign:PackIcon Kind="Fire" 
+                                                   Width="24" Height="24"
+                                                   Foreground="#FF5722"/>
+                            <TextBlock Text="Streak"
+                                      Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                      Margin="12,0,0,0"/>
+                        </DockPanel>
+                        <TextBlock Grid.Row="1"
+                                  Text="{Binding Streak}"
+                                  Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                                  FontWeight="Light"
+                                  Margin="0,16,0,4"
+                                  HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="2"
+                                  Text="days"
+                                  Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                  Opacity="0.6"
+                                  HorizontalAlignment="Center"/>
+                    </Grid>
+                </materialDesign:Card>
+            </UniformGrid>
+
+            <!-- Main Content Grid -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Today's Tasks -->
+                <materialDesign:Card Grid.Column="0" 
+                                    Margin="0,0,12,0" 
+                                    UniformCornerRadius="8"
+                                    materialDesign:ElevationAssist.Elevation="Dp2">
+                    <DockPanel Margin="20">
+                        <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0,0,0,20">
+                            <materialDesign:PackIcon Kind="ListStatus" 
+                                                   Width="24" 
+                                                   Height="24"
+                                                   Margin="0,0,12,0"
+                                                   Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                                   VerticalAlignment="Center"/>
+                            <TextBlock Text="Today's Tasks"
+                                     Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                     VerticalAlignment="Center"/>
+                        </DockPanel>
+
+                        <!-- Empty state message -->
+                        <TextBlock Text="No tasks due today"
+                                 Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Opacity="0.6"
+                                 Visibility="{Binding TodaysTasks.Count, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=0}"/>
+
+                        <ItemsControl ItemsSource="{Binding TodaysTasks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Card Margin="0,0,0,8" 
+                                                       UniformCornerRadius="4"
+                                                       materialDesign:ElevationAssist.Elevation="Dp1">
+                                        <Grid Margin="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Grid.Column="0"
+                                                     IsChecked="{Binding IsCompleted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     Command="{Binding DataContext.ToggleTaskCompletionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                     CommandParameter="{Binding}"
+                                                     Style="{StaticResource MaterialDesignCheckBox}"
+                                                     Margin="0,0,12,0"/>
+
+                                            <Border Grid.Column="1"
+                                                    CornerRadius="12"
+                                                    Padding="8,2"
+                                                    Margin="0,0,12,0"
+                                                    Height="24">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#E0E0E0"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Priority}" Value="High">
+                                                                <Setter Property="Background" Value="#ef5350"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Priority}" Value="Medium">
+                                                                <Setter Property="Background" Value="#ffb74d"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Priority}" Value="Low">
+                                                                <Setter Property="Background" Value="#81c784"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Priority}"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalAlignment="Center"
+                                                         FontSize="12">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#424242"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Priority}" Value="High">
+                                                                    <Setter Property="Foreground" Value="White"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="2"
+                                                     Text="{Binding Title}"
+                                                     VerticalAlignment="Center"
+                                                     TextWrapping="Wrap"
+                                                     Margin="0,0,8,0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                <Setter Property="Opacity" Value="0.6"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <Button Grid.Column="3"
+                                                    Style="{StaticResource MaterialDesignIconForegroundButton}"
+                                                    Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Width="32"
+                                                    Height="32"
+                                                    Padding="4">
+                                                <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                                            </Button>
+                                        </Grid>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DockPanel>
+                </materialDesign:Card>
+
+                <!-- Timer Section -->
+                <materialDesign:Card Grid.Column="1" 
+                                   Margin="12,0,0,0" 
+                                   UniformCornerRadius="8"
+                                   materialDesign:ElevationAssist.Elevation="Dp2">
+                    <timer:CodeTimerView/>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl> 

@@ -1,0 +1,241 @@
+<UserControl
+    x:Class="AlexAssist.UI.Views.Tasks.TasksView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:viewmodels="clr-namespace:AlexAssist.UI.ViewModels"
+    xmlns:converters="clr-namespace:AlexAssist.UI.Converters"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TaskViewModel}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToStrikethroughConverter x:Key="BoolToStrikethroughConverter"/>
+        <converters:BoolToEditSaveConverter x:Key="BoolToEditSaveConverter"/>
+        <converters:BoolToTaskEditorTitleConverter x:Key="BoolToTaskEditorTitleConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Task Editor -->
+        <materialDesign:DialogHost
+            IsOpen="{Binding IsTaskEditorVisible}"
+            CloseOnClickAway="False"
+            OverlayBackground="#80000000">
+            <materialDesign:DialogHost.DialogContent>
+                <materialDesign:Card Margin="16" Padding="16" MinWidth="400">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,16">
+                            <TextBlock 
+                                Text="{Binding IsEditing, Converter={StaticResource BoolToTaskEditorTitleConverter}}"
+                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                            <Button
+                                Command="{Binding CloseEditorCommand}"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                HorizontalAlignment="Right">
+                                <materialDesign:PackIcon Kind="Close"/>
+                            </Button>
+                        </Grid>
+
+                        <TextBox
+                            Text="{Binding NewTaskTitle, UpdateSourceTrigger=PropertyChanged}"
+                            materialDesign:HintAssist.Hint="Task Title"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            Margin="0,8"/>
+                        
+                        <TextBox
+                            Text="{Binding NewTaskDescription, UpdateSourceTrigger=PropertyChanged}"
+                            materialDesign:HintAssist.Hint="Description"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            MinHeight="60"
+                            Margin="0,8"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <DatePicker
+                                Grid.Column="0"
+                                SelectedDate="{Binding SelectedDueDate}"
+                                materialDesign:HintAssist.Hint="Due Date"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                Margin="0,8,8,8"/>
+                            
+                            <ComboBox
+                                Grid.Column="1"
+                                ItemsSource="{Binding AvailablePriorities}"
+                                SelectedItem="{Binding SelectedPriority}"
+                                materialDesign:HintAssist.Hint="Priority"
+                                Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                Panel.ZIndex="1000"
+                                materialDesign:ComboBoxAssist.ClassicMode="True"
+                                Margin="8,8">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            
+                            <ComboBox
+                                Grid.Column="2"
+                                ItemsSource="{Binding AvailableCategories}"
+                                SelectedItem="{Binding SelectedCategory}"
+                                materialDesign:HintAssist.Hint="Category"
+                                Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                Panel.ZIndex="1000"
+                                materialDesign:ComboBoxAssist.ClassicMode="True"
+                                Margin="8,8,0,8">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                            <Button
+                                Command="{Binding ClearEditorCommand}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Content="Clear"
+                                Margin="0,0,8,0"/>
+                            <Button
+                                Command="{Binding SaveTaskCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="4">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{Binding IsEditing, Converter={StaticResource BoolToEditSaveConverter}}"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </materialDesign:Card>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+
+        <!-- Task List -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Search and Filter -->
+            <Grid Grid.Row="0" Margin="16,16,16,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox
+                    Grid.Column="0"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                    materialDesign:HintAssist.Hint="Search tasks..."
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                
+                <ToggleButton
+                    Grid.Column="1"
+                    Margin="16,0,0,0"
+                    IsChecked="{Binding ShowCompletedTasks}"
+                    ToolTip="Show/Hide Completed Tasks">
+                    <materialDesign:PackIcon
+                        Kind="CheckboxMarkedOutline"
+                        Width="24"
+                        Height="24"/>
+                </ToggleButton>
+            </Grid>
+            
+            <!-- Tasks List -->
+            <ScrollViewer Grid.Row="1" Margin="16,0,16,16">
+                <ItemsControl ItemsSource="{Binding FilteredTasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <materialDesign:Card Margin="0,0,0,8" UniformCornerRadius="8">
+                                <Grid Margin="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <CheckBox
+                                        Grid.Column="0"
+                                        IsChecked="{Binding IsCompleted}"
+                                        Command="{Binding DataContext.ToggleCompletionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource MaterialDesignCheckBox}"/>
+                                    
+                                    <StackPanel Grid.Column="1" Margin="16,0">
+                                        <TextBlock
+                                            Text="{Binding Title}"
+                                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                            TextDecorations="{Binding IsCompleted, Converter={StaticResource BoolToStrikethroughConverter}}"/>
+                                        
+                                        <TextBlock
+                                            Text="{Binding Description}"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                            TextWrapping="Wrap"
+                                            Opacity="0.6"/>
+                                        
+                                        <WrapPanel Margin="0,8,0,0">
+                                            <materialDesign:Chip
+                                                Content="{Binding Priority}"
+                                                Margin="0,0,8,0"/>
+                                            <materialDesign:Chip
+                                                Content="{Binding Category}"
+                                                Margin="0,0,8,0"/>
+                                            <materialDesign:Chip
+                                                Content="{Binding DueDate, StringFormat='{}{0:MMM dd}'}"
+                                                Icon="{materialDesign:PackIcon Kind=Calendar}"
+                                                Visibility="{Binding DueDate, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                    
+                                    <StackPanel
+                                        Grid.Column="2"
+                                        Orientation="Horizontal">
+                                        <Button
+                                            Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}">
+                                            <materialDesign:PackIcon Kind="Delete"/>
+                                        </Button>
+                                        <Button
+                                            Command="{Binding DataContext.EditTaskCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}">
+                                            <materialDesign:PackIcon Kind="Pencil"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </materialDesign:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            
+            <!-- Add Task FAB -->
+            <Button
+                Grid.Row="1"
+                Command="{Binding NewTaskCommand}"
+                Style="{StaticResource MaterialDesignFloatingActionButton}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="0,0,32,32">
+                <materialDesign:PackIcon
+                    Kind="Plus"
+                    Width="24"
+                    Height="24"/>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl> 

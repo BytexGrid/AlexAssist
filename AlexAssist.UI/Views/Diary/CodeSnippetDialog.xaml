@@ -1,0 +1,57 @@
+<UserControl x:Class="AlexAssist.UI.Views.Diary.CodeSnippetDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:AlexAssist.UI.Views.Diary"
+             mc:Ignorable="d" 
+             Width="600">
+    
+    <StackPanel Margin="16">
+        <TextBlock Text="Add Code Snippet"
+                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                   Margin="0,0,0,16"/>
+
+        <ComboBox x:Name="LanguageComboBox"
+                  materialDesign:HintAssist.Hint="Select Language"
+                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                  Margin="0,0,0,16">
+            <ComboBoxItem Content="C#"/>
+            <ComboBoxItem Content="Python"/>
+            <ComboBoxItem Content="JavaScript"/>
+            <ComboBoxItem Content="HTML"/>
+            <ComboBoxItem Content="CSS"/>
+            <ComboBoxItem Content="SQL"/>
+            <ComboBoxItem Content="JSON"/>
+            <ComboBoxItem Content="XML"/>
+            <ComboBoxItem Content="Other"/>
+        </ComboBox>
+
+        <TextBox x:Name="DescriptionTextBox"
+                 materialDesign:HintAssist.Hint="Description (optional)"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 Margin="0,0,0,16"/>
+
+        <TextBox x:Name="CodeTextBox"
+                 materialDesign:HintAssist.Hint="Paste your code here"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 FontFamily="Consolas"
+                 MinHeight="200"
+                 Margin="0,0,0,16"/>
+
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right">
+            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Content="CANCEL"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    Margin="0,0,8,0"/>
+            <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                    Content="ADD"
+                    Click="AddButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl> 
