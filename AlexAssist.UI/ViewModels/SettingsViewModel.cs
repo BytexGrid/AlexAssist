@@ -27,7 +27,13 @@ namespace AlexAssist.UI.ViewModels
         {
             _taskRepository = new TaskRepository();
             _diaryRepository = new DiaryRepository();
-            _mainViewModel = App.Current.MainWindow.DataContext as MainViewModel;
+            
+            var mainWindow = App.Current.MainWindow;
+            if (mainWindow?.DataContext is not MainViewModel mainViewModel)
+            {
+                throw new InvalidOperationException("MainViewModel not found in MainWindow.DataContext");
+            }
+            _mainViewModel = mainViewModel;
 
             ExportDatabaseCommand = new RelayCommand(_ => ExportDatabase());
             ImportDatabaseCommand = new RelayCommand(_ => ImportDatabase());

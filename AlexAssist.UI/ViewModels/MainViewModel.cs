@@ -61,8 +61,11 @@ namespace AlexAssist.UI.ViewModels
                 if (File.Exists(preferencesPath))
                 {
                     var jsonString = File.ReadAllText(preferencesPath);
-                    var preferences = JsonSerializer.Deserialize<dynamic>(jsonString);
-                    IsDarkTheme = preferences.GetProperty("IsDarkTheme").GetBoolean();
+                    var preferences = JsonSerializer.Deserialize<JsonDocument>(jsonString);
+                    if (preferences?.RootElement.TryGetProperty("IsDarkTheme", out var darkThemeProperty) == true)
+                    {
+                        IsDarkTheme = darkThemeProperty.GetBoolean();
+                    }
                 }
             }
             catch (Exception ex)
