@@ -18,6 +18,12 @@ namespace AlexAssist.UI.Models
         public DbSet<Quote> Quotes { get; set; } = null!;
         public DbSet<CodingSession> CodingSessions => Set<CodingSession>();
 
+        public AppDbContext()
+        {
+            // Ensure database is created and migrations are applied
+            Database.Migrate();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var folder = Path.GetDirectoryName(DbPath);
