@@ -20,17 +20,26 @@ namespace AlexAssist.UI.Models
 
         public AppDbContext()
         {
-            // Ensure database is created and migrations are applied
-            Database.Migrate();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+            // Ensure database directory exists
             var folder = Path.GetDirectoryName(DbPath);
             if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
+
+            // Ensure database is created and schema is up to date
+            try
+            {
+                Database.EnsureCreated();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error ensuring database created: {ex.Message}");
+            }
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
             optionsBuilder.UseSqlite($"Data Source={DbPath}");
         }
 
@@ -54,6 +63,14 @@ namespace AlexAssist.UI.Models
 
             // Configure TodoTask
             modelBuilder.Entity<TodoTask>()
+                .Property(e => e.Tags)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, _jsonOptions),
+                    v => JsonSerializer.Deserialize<List<string>>(v, _jsonOptions) ?? new List<string>()
+                );
+
+            // Configure CodingSession
+            modelBuilder.Entity<CodingSession>()
                 .Property(e => e.Tags)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, _jsonOptions),
